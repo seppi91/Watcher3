@@ -9,6 +9,14 @@ db/*
 core/cp_plugins/tasks.json
 .editorconfig
 
+# Packaging files
+*.egg
+/*.egg-info
+/dist/*
+build
+_build
+.cache
+
 # Compiled
 *.pyc
 __pycache__
@@ -20,3 +28,4 @@ Thumbs.db
 TODO
 .*
 !.github
+!.pre-commit-config.yaml
