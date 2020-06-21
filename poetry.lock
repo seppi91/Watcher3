@@ -221,6 +221,20 @@ python-versions = "*"
 version = "0.0.1"
 
 [[package]]
+category = "dev"
+description = "A Python utility / library to sort Python imports."
+name = "isort"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "4.3.21"
+
+[package.extras]
+pipfile = ["pipreqs", "requirementslib"]
+pyproject = ["toml"]
+requirements = ["pipreqs", "pip-api"]
+xdg_home = ["appdirs (>=1.4.0)"]
+
+[[package]]
 category = "main"
 description = "Utility functions for Python class constructs"
 name = "jaraco.classes"
@@ -563,7 +577,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "469004d3b8d253ea929d080c8b8463f0966808e6a2f9c1ac7b2dbc94b91bb37b"
+content-hash = "8757a824738ce79bb7f1f85bc893937ac4f68a6cad118534e125b619fb71be68"
 python-versions = ">=3.6.1, <3.8"
 
 [metadata.files]
@@ -639,6 +653,10 @@ importlib-resources = [
 ]
 infi = [
     {file = "infi-0.0.1.tar.gz", hash = "sha256:82e40fdfd37b425d3ffeaf2a5d00aac7c491f355feb0a61744b50f9e6bba872a"},
+]
+isort = [
+    {file = "isort-4.3.21-py2.py3-none-any.whl", hash = "sha256:6e811fcb295968434526407adb8796944f1988c5b65e8139058f2014cbe100fd"},
+    {file = "isort-4.3.21.tar.gz", hash = "sha256:54da7e92468955c4fceacd0c86bd0ec997b0e1ee80d97f67c35a78b719dccab1"},
 ]
 "jaraco.classes" = [
     {file = "jaraco.classes-2.0-py2.py3-none-any.whl", hash = "sha256:d43d73bc8e4ed67c45b540fc7ea171444ff05779710104a120926ba517327df6"},
