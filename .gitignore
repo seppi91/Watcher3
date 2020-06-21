@@ -1,10 +1,10 @@
 # User's Files
-userdata/*
-!userdata/gitkeep
-logs/*
-watcher.zip
-core/version
-core/rss/imdb
+watcher/userdata/*
+!watcher/userdata/gitkeep
+watcher/logs/*
+watcher/watcher.zip
+watcher/core/version
+watcher/core/rss/imdb
 db/*
 core/cp_plugins/tasks.json
 .editorconfig
@@ -12,7 +12,7 @@ core/cp_plugins/tasks.json
 # Compiled
 *.pyc
 __pycache__
-templates/cache
+watcher/templates/cache
 
 # System Files
 desktop.ini
@@ -20,7 +20,3 @@ Thumbs.db
 TODO
 .*
 !.github
-
-# Readme
-README.md
-ISSUE_TEMPLATE.md

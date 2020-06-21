@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "watcher3"
+name = "watcher"
 version = "0.1.0"
 description = "Watcher is an automated movie NZB & Torrent searcher and snatcher."
 authors = ["nosmokingbandit", "barbequesauce"]
@@ -16,7 +16,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.5"
+python = ">=3.5, <3.8"
 bencodepy = "^0.9.5"
 cherrypy = "^11.0.0"
 requests = "^2.24.0"
@@ -34,6 +34,9 @@ rtorrent-python = "^0.2.9"
 rtorrent-xmlrpc = "^0.0.3"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+watcher = 'watcher.watcher:run'
 
 [build-system]
 requires = ["poetry>=0.12"]
