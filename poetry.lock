@@ -336,6 +336,10 @@ optional = false
 python-versions = "*"
 version = "1.1.1"
 
+[package.source]
+reference = "681d95828a66a563d8450c349d6513965dc99c4d"
+type = "git"
+url = "https://github.com/divijbindlish/parse-torrent-name.git"
 [[package]]
 category = "dev"
 description = "Utility library for gitignore style pattern matching of file paths."
@@ -618,7 +622,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "0b439068a6c4f3bcccdbd3ff539f4e6bfc8f3c8887ad66340a7fa72b97c7cec6"
+content-hash = "905534a941aed7aaf28fee7472ba109c5e669f272dc939e34c8ab712d14bacb5"
 python-versions = ">=3.6.1, <3.8"
 
 [metadata.files]
@@ -761,9 +765,7 @@ more-itertools = [
 nodeenv = [
     {file = "nodeenv-1.4.0-py2.py3-none-any.whl", hash = "sha256:4b0b77afa3ba9b54f4b6396e60b0c83f59eaeb2d63dc3cc7a70f7f4af96c82bc"},
 ]
-parse-torrent-name = [
-    {file = "parse-torrent-name-1.1.1.tar.gz", hash = "sha256:ada6fa9d9f27dee0dece96cbd845962e3d22ec70239fecdc5b71e776c0ec31c4"},
-]
+parse-torrent-name = []
 pathspec = [
     {file = "pathspec-0.8.0-py2.py3-none-any.whl", hash = "sha256:7d91249d21749788d07a2d0f94147accd8f845507400749ea19c1ec9054a12b0"},
     {file = "pathspec-0.8.0.tar.gz", hash = "sha256:da45173eb3a6f2a5a487efba21f050af2b41948be6ab52b6a1e3ff22bb8b7061"},
