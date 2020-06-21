@@ -6,7 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        os: [Ubuntu, Windows]
+        python-version: [3.5, 3.6, 3.7]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -18,4 +19,4 @@ jobs:
     - name: Install dependencies
       run: poetry install
     - name: Start Application
-      run: timeout 10 poetry run python watcher.py
+      run: timeout --preserve-status 10 poetry run watcher
