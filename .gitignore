@@ -12,7 +12,7 @@ core/cp_plugins/tasks.json
 # Packaging files
 *.egg
 /*.egg-info
-/dist/*
+dist/
 build
 _build
 .cache
