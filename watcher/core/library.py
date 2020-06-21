@@ -1,18 +1,25 @@
+import csv
+import datetime
+import json
+import logging
 import os
 import re
-import json
-import datetime
-import logging
-import csv
 import threading
-from . import searchresults, plugins
-from watcher import core
-from .movieinfo import TheMovieDatabase, Poster
-from .helpers import Url
-from hachoir.parser import createParser
-from hachoir.metadata import extractMetadata
-import PTN
+
 from gettext import gettext as _
+
+import PTN
+
+from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
+
+from watcher import core
+
+from . import plugins
+from . import searchresults
+from .helpers import Url
+from .movieinfo import Poster
+from .movieinfo import TheMovieDatabase
 
 
 logging = logging.getLogger(__name__)

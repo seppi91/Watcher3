@@ -4,6 +4,7 @@ import os
 
 from watcher import core
 
+
 """
 Logging rules:
 

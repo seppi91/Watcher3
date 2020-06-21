@@ -1,10 +1,12 @@
 import logging
 import re
 
-from deluge_client import DelugeRPCClient
 from datetime import datetime
 
+from deluge_client import DelugeRPCClient
+
 from watcher import core
+
 
 logging.getLogger("lib.deluge_client").setLevel(logging.CRITICAL)
 logging = logging.getLogger(__name__)

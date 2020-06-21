@@ -1,12 +1,16 @@
-from watcher import core
-from .movieinfo import TheMovieDatabase
-from .library import Manage
-from . import searcher
-import cherrypy
-import threading
-import os
 import json
 import logging
+import os
+import threading
+
+import cherrypy
+
+from watcher import core
+
+from . import searcher
+from .library import Manage
+from .movieinfo import TheMovieDatabase
+
 
 logging = logging.getLogger(__name__)
 

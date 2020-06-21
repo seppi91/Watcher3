@@ -1,5 +1,7 @@
-from watcher import core
 import logging
+
+from watcher import core
+
 
 logging = logging.getLogger(__name__)
 

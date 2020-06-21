@@ -1,10 +1,13 @@
+import collections
+import datetime
 import json
 import random
-import datetime
+
 from watcher import core
-import collections
+
 from . import localization
 from .helpers import Comparisons
+
 
 """ Config
 Config is a simple json object that is loaded into core.CONFIG as a dict

@@ -1,11 +1,14 @@
-import logging
 import datetime
-import PTN
+import json
+import logging
 
 from base64 import b16encode
+
+import PTN
+
 from watcher import core
 from watcher.core.helpers import Url
-import json
+
 
 logging = logging.getLogger(__name__)
 

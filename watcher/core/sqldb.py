@@ -1,13 +1,16 @@
-from watcher import core
 import datetime
 import logging
-import time
 import os
 import shutil
-from . import config
+import time
 
-from .helpers import Comparisons
 import sqlalchemy as sqla
+
+from watcher import core
+
+from . import config
+from .helpers import Comparisons
+
 
 logging = logging.getLogger(__name__)
 

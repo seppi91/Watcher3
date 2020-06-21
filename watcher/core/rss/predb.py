@@ -1,9 +1,11 @@
 import logging
 import xml.etree.cElementTree as ET
 
+from stringscore import liquidmetal as lm
+
 from watcher import core
 from watcher.core.helpers import Url
-from stringscore import liquidmetal as lm
+
 
 logging = logging.getLogger(__name__)
 

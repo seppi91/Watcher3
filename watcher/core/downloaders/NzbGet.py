@@ -1,7 +1,9 @@
 import logging
+
 from xmlrpc.client import ServerProxy
 
 from watcher import core
+
 
 logging = logging.getLogger(__name__)
 

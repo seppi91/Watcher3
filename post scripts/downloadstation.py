@@ -17,8 +17,12 @@ delay = 5
 #  DO NOT TOUCH ANYTHING BELOW THIS LINE!  #
 # ======================================== #
 
+import json
 import os
+import ssl
 import sys
+import time
+
 
 args = os.environ
 
@@ -26,9 +30,6 @@ if not args["TR_TORRENT_NAME"] in os.listdir(destination):
     # Not a Watcher download
     sys.exit(0)
 
-import json
-import time
-import ssl
 
 time.sleep(delay)
 if sys.version_info.major < 3:

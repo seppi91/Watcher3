@@ -1,9 +1,14 @@
-import logging
-from datetime import datetime, timedelta
-from threading import Timer, Lock
-import os
 import json
+import logging
+import os
+
+from datetime import datetime
+from datetime import timedelta
+from threading import Lock
+from threading import Timer
+
 from cherrypy.process import plugins
+
 
 logging = logging.getLogger("CPTaskScheduler")
 

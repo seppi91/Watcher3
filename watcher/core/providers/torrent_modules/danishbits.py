@@ -1,7 +1,9 @@
-from watcher import core
-import logging
-from watcher.core.helpers import Url
 import json
+import logging
+
+from watcher import core
+from watcher.core.helpers import Url
+
 
 logging = logging.getLogger(__name__)
 

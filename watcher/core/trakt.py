@@ -1,14 +1,16 @@
-from .helpers import Url
-from .helpers import Comparisons
-from .library import Manage
-import json
-from watcher import core
 import datetime
-from . import searcher
-import xml.etree.cElementTree as ET
-import re
-
+import json
 import logging
+import re
+import xml.etree.cElementTree as ET
+
+from watcher import core
+
+from . import searcher
+from .helpers import Comparisons
+from .helpers import Url
+from .library import Manage
+
 
 logging = logging.getLogger(__name__)
 

@@ -1,10 +1,16 @@
 import json
 import logging
-from time import time, sleep
-from watcher import core
 import os
 import re
-from .helpers import Comparisons, Url
+
+from time import sleep
+from time import time
+
+from watcher import core
+
+from .helpers import Comparisons
+from .helpers import Url
+
 
 _k = Comparisons._k
 

@@ -1,9 +1,13 @@
-from watcher import core
-from xml.etree.cElementTree import fromstring
-from xmljson import yahoo
 import logging
-from watcher.core.helpers import Url
 import re
+
+from xml.etree.cElementTree import fromstring
+
+from xmljson import yahoo
+
+from watcher import core
+from watcher.core.helpers import Url
+
 
 logging = logging.getLogger(__name__)
 

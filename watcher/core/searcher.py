@@ -1,14 +1,21 @@
 import datetime
 import logging
-import PTN
 import re
 
-from watcher import core
-from . import searchresults, snatcher, proxy
-from .library import Manage
-from .providers import torrent, newznab
-from .rss import predb
+import PTN
+
 from stringscore import liquidmetal as lm
+
+from watcher import core
+
+from . import proxy
+from . import searchresults
+from . import snatcher
+from .library import Manage
+from .providers import newznab
+from .providers import torrent
+from .rss import predb
+
 
 logging = logging.getLogger(__name__)
 

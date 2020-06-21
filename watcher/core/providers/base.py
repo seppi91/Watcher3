@@ -1,13 +1,15 @@
-from xml.etree.cElementTree import fromstring
-from xmljson import yahoo
 import logging
 import re
 import urllib.parse
 
-from watcher import core
-from watcher.core.helpers import Url
-from watcher.core import proxy
 from gettext import gettext as _
+from xml.etree.cElementTree import fromstring
+
+from xmljson import yahoo
+
+from watcher import core
+from watcher.core import proxy
+from watcher.core.helpers import Url
 
 
 class NewzNabProvider(object):

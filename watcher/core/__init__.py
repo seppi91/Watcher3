@@ -1,8 +1,10 @@
+import logging
+import os
 import ssl
 import sys
-import os
+
 import cherrypy
-import logging
+
 
 logging = logging.getLogger(__name__)
 

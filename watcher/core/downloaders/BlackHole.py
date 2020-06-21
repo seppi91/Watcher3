@@ -1,8 +1,10 @@
 import logging
 import os
+
 from watcher import core
-from watcher.core.helpers import Url
 from watcher.core.helpers import Torrent as th
+from watcher.core.helpers import Url
+
 
 logging = logging.getLogger(__name__)
 

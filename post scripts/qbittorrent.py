@@ -15,8 +15,11 @@ verifyssl = True  # may need to change to False if using self-signed ssl cert
 #  DO NOT TOUCH ANYTHING BELOW THIS LINE!  #
 # ======================================== #
 
-import sys
+import json
 import os
+import ssl
+import sys
+
 
 download_dir = sys.argv[2]  # %D
 
@@ -27,8 +30,6 @@ if parent_folder.lower() != category.lower():
     # Not watcher category
     sys.exit(0)
 
-import json
-import ssl
 
 if sys.version_info.major < 3:
     import urllib

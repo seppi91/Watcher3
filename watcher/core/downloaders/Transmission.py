@@ -1,9 +1,11 @@
 import logging
 
+from datetime import datetime
+
 import transmissionrpc
 
 from watcher import core
-from datetime import datetime
+
 
 logging = logging.getLogger(__name__)
 

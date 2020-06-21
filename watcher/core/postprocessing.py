@@ -6,10 +6,15 @@ import re
 import shutil
 
 import cherrypy
+
 from watcher import core
-from . import plugins, snatcher
-from .library import Metadata, Manage
+
+from . import plugins
+from . import snatcher
 from .downloaders import PutIO
+from .library import Manage
+from .library import Metadata
+
 
 logging = logging.getLogger(__name__)
 

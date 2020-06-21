@@ -3,6 +3,7 @@ import logging
 from watcher import core
 from watcher.core.providers.base import NewzNabProvider
 
+
 logging = logging.getLogger(__name__)
 
 

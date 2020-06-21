@@ -1,7 +1,11 @@
-import cherrypy
-from watcher import core
 import logging
+
+import cherrypy
+
 from mako.template import Template
+
+from watcher import core
+
 
 LOGIN_URL = "/auth/"
 

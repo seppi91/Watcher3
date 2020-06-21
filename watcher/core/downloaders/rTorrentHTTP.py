@@ -1,9 +1,12 @@
 import logging
-from watcher import core
-import xmlrpc.client
-from watcher.core.helpers import Torrent
 import time
+import xmlrpc.client
+
 from urllib.parse import urlparse
+
+from watcher import core
+from watcher.core.helpers import Torrent
+
 
 logging = logging.getLogger(__name__)
 

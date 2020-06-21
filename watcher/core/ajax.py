@@ -1,27 +1,34 @@
+import datetime
 import json
 import logging
 import os
 import threading
 import time
-import cherrypy
-import datetime
-from watcher import core
-from . import (
-    config,
-    library,
-    searchresults,
-    searcher,
-    snatcher,
-    notification,
-    plugins,
-    downloaders,
-)
-from .library import Metadata, Manage
-from .movieinfo import TheMovieDatabase, YouTube
-from .providers import torrent, newznab
-from .helpers import Conversions
-import backup
+
 from gettext import gettext as _
+
+import cherrypy
+
+import backup
+
+from watcher import core
+
+from . import config
+from . import downloaders
+from . import library
+from . import notification
+from . import plugins
+from . import searcher
+from . import searchresults
+from . import snatcher
+from .helpers import Conversions
+from .library import Manage
+from .library import Metadata
+from .movieinfo import TheMovieDatabase
+from .movieinfo import YouTube
+from .providers import newznab
+from .providers import torrent
+
 
 logging = logging.getLogger(__name__)
 

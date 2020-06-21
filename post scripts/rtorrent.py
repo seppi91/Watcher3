@@ -12,9 +12,12 @@ watcheraddress = u"http://localhost:9090/"
 label = "Watcher"
 verifyssl = True  # may need to change to False if using self-signed ssl cert
 
+import json
+import ssl
 #  DO NOT TOUCH ANYTHING BELOW THIS LINE!  #
 # ======================================== #
 import sys
+
 
 script, rtor_label, name, downloadid, path = sys.argv
 
@@ -22,8 +25,6 @@ if label != rtor_label:
     print("Label doesn't match config. Ignoring this download.")
     sys.exit(0)
 
-import json
-import ssl
 
 if sys.version_info.major < 3:
     import urllib

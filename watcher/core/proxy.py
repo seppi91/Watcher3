@@ -1,7 +1,10 @@
-import urllib.request
-from watcher import core
 import logging
+import urllib.request
+
+from watcher import core
+
 from .helpers import Url
+
 
 logging = logging.getLogger(__name__)
 

@@ -1,8 +1,11 @@
-import logging
 import json
+import logging
+
+from urllib.parse import quote as urlquote
+
 from watcher import core
 from watcher.core.helpers import Url
-from urllib.parse import quote as urlquote
+
 
 cookie = None
 

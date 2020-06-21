@@ -11,9 +11,10 @@ watcheraddress = "http://localhost:9090"
 verifyssl = True  # may need to change to False if using self-signed ssl cert
 
 import json
-import sys
 import os
 import ssl
+import sys
+
 
 if sys.version_info.major < 3:
     import urllib

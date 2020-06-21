@@ -1,8 +1,10 @@
-import logging
 import datetime
+import logging
 import xml.etree.cElementTree as ET
+
 from watcher import core
 from watcher.core.helpers import Url
+
 
 logging = logging.getLogger(__name__)
 

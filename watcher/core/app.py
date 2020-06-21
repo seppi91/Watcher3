@@ -1,15 +1,23 @@
-import cherrypy
-from watcher import core
-from . import ajax, scheduler, plugins, localization, api
-from .auth import AuthController
-from .postprocessing import Postprocessing
-import os
 import json
-from mako.template import Template
 import logging
-
+import os
 import sys
 import time
+
+import cherrypy
+
+from mako.template import Template
+
+from watcher import core
+
+from . import ajax
+from . import api
+from . import localization
+from . import plugins
+from . import scheduler
+from .auth import AuthController
+from .postprocessing import Postprocessing
+
 
 locale_dir = os.path.join(core.PROG_PATH, "locale")
 

@@ -1,4 +1,3 @@
-from watcher import backup
 import datetime
 import json
 import logging
@@ -7,9 +6,12 @@ import shutil
 import subprocess
 import zipfile
 
+from watcher import backup
 from watcher import core
+
 from . import notification
 from .helpers import Url
+
 
 logmodule = logging
 logging = logging.getLogger(__name__)

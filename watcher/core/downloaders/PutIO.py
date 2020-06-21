@@ -1,8 +1,10 @@
-import logging
-from watcher import core
 import json
+import logging
 import os
+
+from watcher import core
 from watcher.core.helpers import Url
+
 
 logging = logging.getLogger(__name__)
 

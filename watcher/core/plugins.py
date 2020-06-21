@@ -1,11 +1,13 @@
-from watcher import core
 import json
-import os
-import sys
-import operator
-import subprocess
-import threading
 import logging
+import operator
+import os
+import subprocess
+import sys
+import threading
+
+from watcher import core
+
 
 logging = logging.getLogger(__name__)
 

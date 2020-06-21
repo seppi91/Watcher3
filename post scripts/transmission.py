@@ -12,8 +12,11 @@ verifyssl = True  # may need to change to False if using self-signed ssl cert
 #  DO NOT TOUCH ANYTHING BELOW THIS LINE!  #
 # ======================================== #
 
+import json
 import os
+import ssl
 import sys
+
 
 args = os.environ
 
@@ -28,8 +31,6 @@ if parent_folder.lower() != category.lower():
     sys.exit(0)
 
 
-import json
-import ssl
 
 if sys.version_info.major < 3:
     import urllib

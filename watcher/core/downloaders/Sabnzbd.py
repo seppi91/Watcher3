@@ -5,6 +5,7 @@ import urllib
 from watcher import core
 from watcher.core.helpers import Url
 
+
 logging = logging.getLogger(__name__)
 
 

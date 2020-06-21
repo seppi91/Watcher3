@@ -1,5 +1,18 @@
-import sys
+import argparse  # noqa
+import locale  # noqa
+import logging  # noqa
 import os
+import shutil  # noqa
+import sys
+import webbrowser  # noqa
+
+import cherrypy  # noqa
+
+from cherrypy.process.plugins import Daemonizer  # noqa
+from cherrypy.process.plugins import PIDFile
+
+from watcher import core  # noqa
+
 
 if sys.version_info < (3, 0, 0):
     print(
@@ -7,7 +20,6 @@ if sys.version_info < (3, 0, 0):
     )
     sys.exit(1)
 
-from watcher import core  # noqa
 
 core.PROG_PATH = os.path.dirname(os.path.realpath(__file__))
 os.chdir(core.PROG_PATH)
@@ -17,14 +29,7 @@ if os.name == "nt":
 else:
     core.PLATFORM = "*nix"
 
-import argparse  # noqa
-import locale  # noqa
-import logging  # noqa
-import webbrowser  # noqa
-import shutil  # noqa
 
-import cherrypy  # noqa
-from cherrypy.process.plugins import Daemonizer, PIDFile  # noqa
 
 
 def run():

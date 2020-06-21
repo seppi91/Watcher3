@@ -1,10 +1,14 @@
+import logging
+
 from xml.etree.cElementTree import fromstring
+
 from xmljson import yahoo
+
 from watcher import core
 from watcher.core.helpers import Url
-from watcher.core.providers.base import NewzNabProvider
 from watcher.core.providers import torrent_modules  # noqa
-import logging
+from watcher.core.providers.base import NewzNabProvider
+
 
 logging = logging.getLogger(__name__)
 

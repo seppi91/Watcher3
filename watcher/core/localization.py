@@ -1,6 +1,8 @@
 import gettext
 import os
+
 from watcher import core
+
 
 locale_dir = os.path.join(core.PROG_PATH, "locale")
 

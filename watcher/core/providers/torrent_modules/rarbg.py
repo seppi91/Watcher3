@@ -1,9 +1,11 @@
 import datetime
-from watcher import core
+import json
 import logging
 import time
+
+from watcher import core
 from watcher.core.helpers import Url
-import json
+
 
 logging = logging.getLogger(__name__)
 

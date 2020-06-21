@@ -1,9 +1,13 @@
-import logging
 import json
+import logging
 import re
-from watcher import core
-from watcher.core.helpers import Torrent, Url
+
 from datetime import datetime
+
+from watcher import core
+from watcher.core.helpers import Torrent
+from watcher.core.helpers import Url
+
 
 cookie = None
 command_id = 0

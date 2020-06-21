@@ -1,13 +1,16 @@
-from watcher import core
-from watcher.core import searcher
-from watcher.core.movieinfo import TheMovieDatabase
-from watcher.core.library import Manage
-from watcher.core.helpers import Url
-from datetime import datetime
+import csv
 import json
 import logging
 import os
-import csv
+
+from datetime import datetime
+
+from watcher import core
+from watcher.core import searcher
+from watcher.core.helpers import Url
+from watcher.core.library import Manage
+from watcher.core.movieinfo import TheMovieDatabase
+
 
 logging = logging.getLogger(__name__)
 

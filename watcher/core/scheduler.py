@@ -1,17 +1,24 @@
 import datetime
+import hashlib
 import logging
-
-import cherrypy
-from watcher import core
 import os
 import time
-import hashlib
 
-from . import searcher, postprocessing, downloaders, snatcher
-from .rss import imdb, popularmovies
+import cherrypy
+
 from lib.cherrypyscheduler import SchedulerPlugin
+from watcher import core
+
+from . import downloaders
+from . import postprocessing
+from . import searcher
+from . import snatcher
 from . import trakt
-from .library import Metadata, Manage
+from .library import Manage
+from .library import Metadata
+from .rss import imdb
+from .rss import popularmovies
+
 
 logging = logging.getLogger(__name__)
 
