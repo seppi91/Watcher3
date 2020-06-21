@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu, Windows]
-        python-version: [3.5, 3.6, 3.7]
+        python-version: [3.6, 3.7]
     steps:
       - uses: actions/checkout@v2
 
@@ -41,7 +41,7 @@ jobs:
       - name: Install poetry
         shell: bash
         run: |
-          python get-poetry.py -y
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
           echo "::set-env name=PATH::$HOME/.poetry/bin:$PATH"
 
       - name: Configure poetry
@@ -65,4 +65,5 @@ jobs:
         run: poetry install
 
       - name: Start Application
+        shell: bash
         run: timeout --preserve-status 10 poetry run watcher
