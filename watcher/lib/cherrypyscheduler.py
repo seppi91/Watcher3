@@ -5,52 +5,53 @@ import os
 import json
 from cherrypy.process import plugins
 
-logging = logging.getLogger('CPTaskScheduler')
+logging = logging.getLogger("CPTaskScheduler")
 
 
 class _Record(object):
-    ''' Default tasks record handler
+    """ Default tasks record handler
     Will read/write from/to ./tasks.json
-    '''
+    """
+
     lock = Lock()
-    file = os.path.join(os.path.split(os.path.realpath(__file__))[0], 'tasks.json')
+    file = os.path.join(os.path.split(os.path.realpath(__file__))[0], "tasks.json")
 
     @staticmethod
     def read():
-        ''' Reads persistence record to dict
+        """ Reads persistence record to dict
 
         Returns dict
-        '''
+        """
 
         with _Record.lock:
-            with open(_Record.file, 'a+') as f:
+            with open(_Record.file, "a+") as f:
                 try:
                     f.seek(0)
                     r = json.load(f)
-                except Exception as _: # noqa
+                except Exception as _:  # noqa
                     r = {}
                     json.dump(r, f)
         return r
 
     @staticmethod
     def write(name, le):
-        ''' Writes record to record_handler
+        """ Writes record to record_handler
         name (str): name of task
         le (str): str() cast of datetime.datetime object for last execution
 
         Does not return
-        '''
+        """
         with _Record.lock:
-            with open(_Record.file, 'r+') as f:
+            with open(_Record.file, "r+") as f:
                 r = json.load(f)
-                r[name] = {'last_execution': le}
+                r[name] = {"last_execution": le}
                 f.seek(0)
                 json.dump(r, f, indent=4, sort_keys=True)
                 f.seek(0)
 
 
 class SchedulerPlugin(plugins.SimplePlugin):
-    '''
+    """
     CherryPy plugin that schedules events at a specific time of day,
         repeating at a certain interval.
 
@@ -67,14 +68,14 @@ class SchedulerPlugin(plugins.SimplePlugin):
     Requires that each ScheduledTask instance be appended to task_list
 
     On stop, terminates Timer for each task in task_list
-    '''
+    """
 
     task_list = {}
     record = None
     record_handler = _Record
 
     def __init__(self, bus, record_handler=_Record, record_file=None):
-        '''
+        """
         bus (obj): instance of cherrypy.engine
         record_handler (object): class to handle read/write of record data  <optional, default _Record>
         record_file (str): path to task record file. Only effective with default record_handler. <default './tasks.json'>
@@ -83,10 +84,12 @@ class SchedulerPlugin(plugins.SimplePlugin):
             See _Record class for method descriptions and requirements.
 
         If record_file is not specified writes to this script's directory as 'tasks.json'
-        '''
+        """
         _Record.file = record_file or _Record.file
         plugins.SimplePlugin.__init__(self, bus)
-        SchedulerPlugin.record_handler = record_handler or SchedulerPlugin.record_handler
+        SchedulerPlugin.record_handler = (
+            record_handler or SchedulerPlugin.record_handler
+        )
         SchedulerPlugin.record = record_handler.read()
 
     def start(self):
@@ -94,26 +97,29 @@ class SchedulerPlugin(plugins.SimplePlugin):
             if t.auto_start:
                 t.start()
         return
+
     start.priority = 75
 
     def stop(self):
-        ''' Calls task.stop for all tasks in task_list '''
+        """ Calls task.stop for all tasks in task_list """
         for name, task in self.task_list.items():
             task.stop()
 
     def restart(self):
-        ''' Calls task.restart for all tasks in task_list '''
+        """ Calls task.restart for all tasks in task_list """
         for name, task in self.task_list.items():
             task.restart()
 
     @staticmethod
     def ScheduledTask(hour, minute, interval, task, auto_start=True, name=None):
-        ''' Creates and returns instance of __ScheduledTask '''
+        """ Creates and returns instance of __ScheduledTask """
 
-        return SchedulerPlugin.__ScheduledTask(hour, minute, interval, task, auto_start, name)
+        return SchedulerPlugin.__ScheduledTask(
+            hour, minute, interval, task, auto_start, name
+        )
 
     class __ScheduledTask(object):
-        ''' Class that creates a new scheduled task.
+        """ Class that creates a new scheduled task.
 
         __init__:
             hour (int): hour to first execute function (24hr time)
@@ -156,7 +162,7 @@ class SchedulerPlugin(plugins.SimplePlugin):
             next_execution (obj): datetime.datetime obj of next execution
 
         Does not return
-        '''
+        """
 
         def __init__(self, hour, minute, interval, task, auto_start, name):
             self._init_args = [hour, minute, interval, task, auto_start, name]
@@ -168,11 +174,11 @@ class SchedulerPlugin(plugins.SimplePlugin):
             self.timer = Timer(0, None)
             self.next_execution = None
 
-            record = SchedulerPlugin.record.get(self.name, {}).get('last_execution')
+            record = SchedulerPlugin.record.get(self.name, {}).get("last_execution")
 
             if record:
                 self.last_execution = record
-                le = datetime.strptime(record, '%Y-%m-%d %H:%M:%S')
+                le = datetime.strptime(record, "%Y-%m-%d %H:%M:%S")
                 hour, minute = le.hour, le.minute
             else:
                 le = datetime.today().replace(microsecond=0)
@@ -182,7 +188,7 @@ class SchedulerPlugin(plugins.SimplePlugin):
             SchedulerPlugin.task_list[self.name] = self
 
         def _calc_delay(self, hour, minute, interval):
-            ''' Calculates the next possible time to run an iteration based off
+            """ Calculates the next possible time to run an iteration based off
                 last_execution as decribed in the record_handler
             hour (int): hour of day (24hr time)
             minute (int): minute of hour
@@ -198,7 +204,7 @@ class SchedulerPlugin(plugins.SimplePlugin):
             If minutes is greater than 60 it will be rolled over into hours.
 
             Returns int seconds until next interval
-            '''
+            """
 
             rollover_hrs = 0
             while minute >= 60:
@@ -225,7 +231,7 @@ class SchedulerPlugin(plugins.SimplePlugin):
             return delay
 
         def _task(self, manual=False, restart=True):
-            ''' Executes the task fn
+            """ Executes the task fn
             manual (bool): if task is being ran by user command     <optional - default False>
             restart (bool): if the timer should be restarted        <optional - default True>
             manual flag only affects logging
@@ -238,66 +244,74 @@ class SchedulerPlugin(plugins.SimplePlugin):
                 access to their last execution time while running.
 
             Does not return
-            '''
+            """
 
             now = datetime.today()
             ms_offset = now.microsecond / 1000000
             now = now.replace(microsecond=0)
 
             if manual:
-                logging.info('== Executing Task: {} Per User Command =='.format(self.name))
+                logging.info(
+                    "== Executing Task: {} Per User Command ==".format(self.name)
+                )
             else:
-                logging.info('== Executing Scheduled Task: {} =='.format(self.name))
+                logging.info("== Executing Scheduled Task: {} ==".format(self.name))
 
             if self.running:
-                logging.warning('Task {} is already running, cancelling execution.')
+                logging.warning("Task {} is already running, cancelling execution.")
                 return
 
             self.running = True
 
             if restart:
-                self.next_execution = now.replace(microsecond=0) + timedelta(seconds=self.interval)
+                self.next_execution = now.replace(microsecond=0) + timedelta(
+                    seconds=self.interval
+                )
                 self.timer = Timer(self.interval - ms_offset, self._task)
                 self.timer.start()
 
             try:
                 self.task()
             except Exception as _:  # noqa
-                logging.warning('Scheduled Task {} Failed:'.format(self.name), exc_info=True)
+                logging.warning(
+                    "Scheduled Task {} Failed:".format(self.name), exc_info=True
+                )
             self.running = False
             self.last_execution = str(now)
-            SchedulerPlugin.record[self.name] = {'last_execution': str(now)}
+            SchedulerPlugin.record[self.name] = {"last_execution": str(now)}
             SchedulerPlugin.record_handler.write(self.name, str(now))
 
             if manual:
-                logging.info('== Finished Task: {} =='.format(self.name))
+                logging.info("== Finished Task: {} ==".format(self.name))
             else:
-                logging.info('== Finished Scheduled Task: {} =='.format(self.name))
+                logging.info("== Finished Scheduled Task: {} ==".format(self.name))
 
         def start(self):
-            ''' Starts timer Thread for task '''
+            """ Starts timer Thread for task """
             delay = self._calc_delay(*self._init_args[:3])
-            self.next_execution = datetime.now().replace(microsecond=0) + timedelta(seconds=delay)
+            self.next_execution = datetime.now().replace(microsecond=0) + timedelta(
+                seconds=delay
+            )
             self.timer = Timer(delay, self._task)
             self.timer.start()
 
         def stop(self):
-            ''' Stops Timer if currently running
+            """ Stops Timer if currently running
 
             Logs and prints task name being cancelled
             Cancels timer for next task
             Will not stop a task currently being executed
 
             Allows in-process tasks to finish, will not kill thread.
-            '''
+            """
 
             if self.timer and self.timer.is_alive():
-                logging.info('Stopping scheduled task {}.'.format(self.name))
-                print('Stopping scheduled task: {}'.format(self.name))
+                logging.info("Stopping scheduled task {}.".format(self.name))
+                print("Stopping scheduled task: {}".format(self.name))
                 self.timer.cancel()
 
         def reload(self, hr, min, interval, auto_start=True):
-            ''' Reloads scheduled task to change time or interval
+            """ Reloads scheduled task to change time or interval
             See self.__init__ for param descriptions.
 
             Does not require 'task', or 'name' args since that is
@@ -310,21 +324,23 @@ class SchedulerPlugin(plugins.SimplePlugin):
             Use to change start time or interval.
 
             Returns bool
-            '''
+            """
 
-            logging.info('Reloading scheduler for {}'.format(self.name))
+            logging.info("Reloading scheduler for {}".format(self.name))
             self.stop()
             try:
-                self.__init__(hr, min, interval, self.task, auto_start=auto_start, name=self.name)
+                self.__init__(
+                    hr, min, interval, self.task, auto_start=auto_start, name=self.name
+                )
                 if auto_start:
                     self.start()
                 return True
             except Exception as _:  # noqa
-                logging.error('Unable to start task', exc_info=True)
+                logging.error("Unable to start task", exc_info=True)
                 return False
 
         def restart(self):
-            ''' Restarts stopped task using initial parameters
+            """ Restarts stopped task using initial parameters
 
             Unlike self.reload(), does not change any timing information.
 
@@ -333,9 +349,9 @@ class SchedulerPlugin(plugins.SimplePlugin):
             Uses self._init_args to start timer based on original params.
 
             Does not return
-            '''
+            """
 
-            logging.info('Restarting schduled task {}'.format(self.name))
+            logging.info("Restarting schduled task {}".format(self.name))
             self.stop()
 
             self.__init__(*self._init_args)
@@ -343,7 +359,7 @@ class SchedulerPlugin(plugins.SimplePlugin):
                 self.start()
 
         def now(self):
-            ''' Skips Thread timer and executes task now
+            """ Skips Thread timer and executes task now
 
             If _task isn't being executed currently, stops timer and runs task.
             Will restart timer if it was running when now() was called. New timer
@@ -352,10 +368,12 @@ class SchedulerPlugin(plugins.SimplePlugin):
             Raises TimerConflictError if task is alread running
 
             Returns str last execution timestamp
-            '''
+            """
 
             if self.running:
-                raise TimerConflictError('The task {} is currently being executed.'.format(self.name))
+                raise TimerConflictError(
+                    "The task {} is currently being executed.".format(self.name)
+                )
             else:
                 restart = False
                 if self.timer:
@@ -366,6 +384,9 @@ class SchedulerPlugin(plugins.SimplePlugin):
 
 
 class TimerConflictError(Exception):
-    ''' Raised when a timed task is in conflict with itself '''
+    """ Raised when a timed task is in conflict with itself """
+
     def __init__(self, msg=None):
-        self.msg = msg if msg else 'An error occured with the timer for a scheduled task.'
+        self.msg = (
+            msg if msg else "An error occured with the timer for a scheduled task."
+        )

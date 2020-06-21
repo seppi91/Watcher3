@@ -21,12 +21,14 @@ search = searcher
 
 
 def create_plugin():
-    ''' Creates plugin instance, adds tasks, and subscribes to cherrypy.engine
+    """ Creates plugin instance, adds tasks, and subscribes to cherrypy.engine
 
     Does not return
-    '''
-    logging.info('Initializing scheduler plugin.')
-    core.scheduler_plugin = SchedulerPlugin(cherrypy.engine, record_handler=record_handler)
+    """
+    logging.info("Initializing scheduler plugin.")
+    core.scheduler_plugin = SchedulerPlugin(
+        cherrypy.engine, record_handler=record_handler
+    )
     AutoSearch.create()
     AutoUpdateCheck.create()
     ImdbRssSync.create()
@@ -43,62 +45,83 @@ def create_plugin():
 class record_handler(object):
     @staticmethod
     def read():
-        return {i['name']: {'last_execution': i['last_execution']} for i in core.sql.dump('TASKS')}
+        return {
+            i["name"]: {"last_execution": i["last_execution"]}
+            for i in core.sql.dump("TASKS")
+        }
 
     @staticmethod
     def write(name, le):
-        if core.sql.row_exists('TASKS', name=name):
-            core.sql.update('TASKS', 'last_execution', le, 'name', name)
+        if core.sql.row_exists("TASKS", name=name):
+            core.sql.update("TASKS", "last_execution", le, "name", name)
         else:
-            core.sql.write('TASKS', {'last_execution': le, 'name': name})
+            core.sql.write("TASKS", {"last_execution": le, "name": name})
         return
 
 
 class PostProcessingScan(object):
-    ''' Scheduled task to automatically scan directory for movie to process '''
+    """ Scheduled task to automatically scan directory for movie to process """
+
     @staticmethod
     def create():
-        conf = core.CONFIG['Postprocessing']['Scanner']
-        interval = conf['interval'] * 60
+        conf = core.CONFIG["Postprocessing"]["Scanner"]
+        interval = conf["interval"] * 60
 
         now = datetime.datetime.today()
         hr = now.hour
         minute = now.minute + interval
 
-        SchedulerPlugin.ScheduledTask(hr, minute, interval, PostProcessingScan.scan_directory, auto_start=conf['enabled'], name='PostProcessing Scan')
+        SchedulerPlugin.ScheduledTask(
+            hr,
+            minute,
+            interval,
+            PostProcessingScan.scan_directory,
+            auto_start=conf["enabled"],
+            name="PostProcessing Scan",
+        )
         return
 
     @staticmethod
     def scan_directory():
-        ''' Method to scan directory for movies to process '''
+        """ Method to scan directory for movies to process """
 
-        conf = core.CONFIG['Postprocessing']['Scanner']
-        d = conf['directory']
+        conf = core.CONFIG["Postprocessing"]["Scanner"]
+        d = conf["directory"]
 
-        logging.info('Scanning {} for movies to process.'.format(d))
+        logging.info("Scanning {} for movies to process.".format(d))
 
-        minsize = core.CONFIG['Postprocessing']['Scanner']['minsize'] * 1048576
+        minsize = core.CONFIG["Postprocessing"]["Scanner"]["minsize"] * 1048576
 
         # paths processed with api requests since last task run
         postprocessed_paths = core.sql.get_postprocessed_paths()
-        logging.debug('Paths already post processed: {}'.format(postprocessed_paths))
+        logging.debug("Paths already post processed: {}".format(postprocessed_paths))
 
         files = []
-        if conf['newfilesonly']:
-            t = core.scheduler_plugin.record.get('PostProcessing Scan', {}).get('last_execution')
+        if conf["newfilesonly"]:
+            t = core.scheduler_plugin.record.get("PostProcessing Scan", {}).get(
+                "last_execution"
+            )
             if not t:
-                logging.warning('Unable to scan directory, last scan timestamp unknown.')
+                logging.warning(
+                    "Unable to scan directory, last scan timestamp unknown."
+                )
                 return
-            le = datetime.datetime.strptime(t, '%Y-%m-%d %H:%M:%S')
+            le = datetime.datetime.strptime(t, "%Y-%m-%d %H:%M:%S")
             threshold = time.mktime(le.timetuple())
 
-            logging.info('Scanning {} for new files only (last scan: {}).'.format(d, le))
+            logging.info(
+                "Scanning {} for new files only (last scan: {}).".format(d, le)
+            )
 
             for i in os.listdir(d):
                 f = os.path.join(d, i)
                 if f in postprocessed_paths:
                     continue
-                if os.path.isfile(f) and os.path.getmtime(f) > threshold and os.path.getsize(f) > minsize:
+                if (
+                    os.path.isfile(f)
+                    and os.path.getmtime(f) > threshold
+                    and os.path.getsize(f) > minsize
+                ):
                     files.append(f)
                 elif os.path.isdir(f) and os.path.getmtime(f) > threshold:
                     files.append(f)
@@ -111,30 +134,39 @@ class PostProcessingScan(object):
                     files.append(f)
 
         if files == []:
-            logging.info('No new files found in directory scan.')
+            logging.info("No new files found in directory scan.")
             return
 
         for i in files:
-            while i[-1] in ('\\', '/'):
+            while i[-1] in ("\\", "/"):
                 i = i[:-1]
             fname = os.path.basename(i)
 
-            logging.info('Processing {}.'.format(i))
+            logging.info("Processing {}.".format(i))
 
-            r = core.sql.get_single_search_result('title', fname)
+            r = core.sql.get_single_search_result("title", fname)
             if r:
-                logging.info('Found match for {} in releases: {}.'.format(fname, r['title']))
+                logging.info(
+                    "Found match for {} in releases: {}.".format(fname, r["title"])
+                )
             else:
-                r['guid'] = 'postprocessing{}'.format(hashlib.md5(fname.encode('ascii', errors='ignore')).hexdigest()).lower()
-                logging.info('Unable to find match in database for {}, release cannot be marked as Finished.'.format(fname))
+                r["guid"] = "postprocessing{}".format(
+                    hashlib.md5(fname.encode("ascii", errors="ignore")).hexdigest()
+                ).lower()
+                logging.info(
+                    "Unable to find match in database for {}, release cannot be marked as Finished.".format(
+                        fname
+                    )
+                )
 
-            d = {'apikey': core.CONFIG['Server']['apikey'],
-                 'mode': 'complete',
-                 'path': i,
-                 'guid': r.get('guid') or '',
-                 'downloadid': '',
-                 'task': True
-                 }
+            d = {
+                "apikey": core.CONFIG["Server"]["apikey"],
+                "mode": "complete",
+                "path": i,
+                "guid": r.get("guid") or "",
+                "downloadid": "",
+                "task": True,
+            }
 
             pp.default(**d)
 
@@ -142,20 +174,23 @@ class PostProcessingScan(object):
 
 
 class AutoSearch(object):
-    ''' Scheduled task to automatically run search/snatch methods '''
+    """ Scheduled task to automatically run search/snatch methods """
+
     @staticmethod
     def create():
-        interval = core.CONFIG['Search']['rsssyncfrequency'] * 60
+        interval = core.CONFIG["Search"]["rsssyncfrequency"] * 60
 
         now = datetime.datetime.today()
         hr = now.hour
-        min = now.minute + core.CONFIG['Search']['rsssyncfrequency']
+        min = now.minute + core.CONFIG["Search"]["rsssyncfrequency"]
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, search.search_all, auto_start=True, name='Movie Search')
+        SchedulerPlugin.ScheduledTask(
+            hr, min, interval, search.search_all, auto_start=True, name="Movie Search"
+        )
 
 
 class MetadataUpdate(object):
-    ''' Scheduled task to automatically run metadata updater '''
+    """ Scheduled task to automatically run metadata updater """
 
     @staticmethod
     def create():
@@ -166,20 +201,27 @@ class MetadataUpdate(object):
         hr = now.hour
         min = now.minute
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, MetadataUpdate.metadata_update, auto_start=True, name='Metadata Update')
+        SchedulerPlugin.ScheduledTask(
+            hr,
+            min,
+            interval,
+            MetadataUpdate.metadata_update,
+            auto_start=True,
+            name="Metadata Update",
+        )
         return
 
     @staticmethod
     def metadata_update():
-        ''' Updates metadata for library
+        """ Updates metadata for library
 
         If movie's theatrical release is more than a year ago it is ignored.
 
         Checks movies with a missing 'media_release_date' field. By the time
             this field is filled all other fields should be populated.
 
-        '''
-        logging.info('Updating library metadata.')
+        """
+        logging.info("Updating library metadata.")
 
         movies = core.sql.get_user_movies()
 
@@ -187,47 +229,63 @@ class MetadataUpdate(object):
 
         u = []
         for i in movies:
-            if i['release_date'] and datetime.datetime.strptime(i['release_date'], '%Y-%m-%d') < cutoff:
+            if (
+                i["release_date"]
+                and datetime.datetime.strptime(i["release_date"], "%Y-%m-%d") < cutoff
+            ):
                 continue
 
-            if not i['media_release_date'] and i['status'] not in ('Finished', 'Disabled'):
+            if not i["media_release_date"] and i["status"] not in (
+                "Finished",
+                "Disabled",
+            ):
                 u.append(i)
 
         if not u:
             return
 
-        logging.info('Updating metadata for: {}.'.format(', '.join([i['title'] for i in u])))
+        logging.info(
+            "Updating metadata for: {}.".format(", ".join([i["title"] for i in u]))
+        )
 
         for i in u:
-            Metadata.update(i.get('imdbid'), tmdbid=i.get('tmdbid'), force_poster=False)
+            Metadata.update(i.get("imdbid"), tmdbid=i.get("tmdbid"), force_poster=False)
 
         return
 
 
 class AutoUpdateCheck(object):
-    ''' Scheduled task to automatically check git for updates and install '''
+    """ Scheduled task to automatically check git for updates and install """
+
     @staticmethod
     def create():
 
-        interval = core.CONFIG['Server']['checkupdatefrequency'] * 3600
+        interval = core.CONFIG["Server"]["checkupdatefrequency"] * 3600
 
         now = datetime.datetime.today()
         hr = now.hour
-        min = now.minute + (core.CONFIG['Server']['checkupdatefrequency'] * 60)
+        min = now.minute + (core.CONFIG["Server"]["checkupdatefrequency"] * 60)
         if now.second > 30:
             min += 1
 
-        if core.CONFIG['Server']['checkupdates']:
+        if core.CONFIG["Server"]["checkupdates"]:
             auto_start = True
         else:
             auto_start = False
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, AutoUpdateCheck.update_check, auto_start=auto_start, name='Update Checker')
+        SchedulerPlugin.ScheduledTask(
+            hr,
+            min,
+            interval,
+            AutoUpdateCheck.update_check,
+            auto_start=auto_start,
+            name="Update Checker",
+        )
         return
 
     @staticmethod
     def update_check(install=True):
-        ''' Checks for any available updates
+        """ Checks for any available updates
         install (bool): install updates if found
 
         Setting 'install' for False will ignore user's config for update installation
@@ -239,91 +297,111 @@ class AutoUpdateCheck(object):
             {'status': 'error', 'error': <error> }
             {'status': 'behind', 'behind_count': #, 'local_hash': 'abcdefg', 'new_hash': 'bcdefgh'}
             {'status': 'current'}
-        '''
+        """
 
         return core.updater.update_check(install=install)
 
 
 class ImdbRssSync(object):
-    ''' Scheduled task to automatically sync IMDB watchlists '''
+    """ Scheduled task to automatically sync IMDB watchlists """
+
     @staticmethod
     def create():
-        interval = core.CONFIG['Search']['Watchlists']['imdbfrequency'] * 60
+        interval = core.CONFIG["Search"]["Watchlists"]["imdbfrequency"] * 60
         now = datetime.datetime.today()
 
         hr = now.hour
-        min = now.minute + core.CONFIG['Search']['Watchlists']['imdbfrequency']
+        min = now.minute + core.CONFIG["Search"]["Watchlists"]["imdbfrequency"]
 
-        if core.CONFIG['Search']['Watchlists']['imdbsync']:
+        if core.CONFIG["Search"]["Watchlists"]["imdbsync"]:
             auto_start = True
         else:
             auto_start = False
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, imdb.sync, auto_start=auto_start, name='IMDB Sync')
+        SchedulerPlugin.ScheduledTask(
+            hr, min, interval, imdb.sync, auto_start=auto_start, name="IMDB Sync"
+        )
         return
 
 
 class PopularMoviesSync(object):
-    ''' Scheduled task to automatically sync PopularMovies list '''
+    """ Scheduled task to automatically sync PopularMovies list """
+
     @staticmethod
     def create():
         interval = 24 * 3600
 
-        hr = core.CONFIG['Search']['Watchlists']['popularmovieshour']
-        min = core.CONFIG['Search']['Watchlists']['popularmoviesmin']
+        hr = core.CONFIG["Search"]["Watchlists"]["popularmovieshour"]
+        min = core.CONFIG["Search"]["Watchlists"]["popularmoviesmin"]
 
-        if core.CONFIG['Search']['Watchlists']['popularmoviessync']:
+        if core.CONFIG["Search"]["Watchlists"]["popularmoviessync"]:
             auto_start = True
         else:
             auto_start = False
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, popularmovies.sync_feed, auto_start=auto_start, name='PopularMovies Sync')
+        SchedulerPlugin.ScheduledTask(
+            hr,
+            min,
+            interval,
+            popularmovies.sync_feed,
+            auto_start=auto_start,
+            name="PopularMovies Sync",
+        )
         return
 
 
 class TraktSync(object):
-    ''' Scheduled task to automatically sync selected Trakt lists '''
+    """ Scheduled task to automatically sync selected Trakt lists """
 
     @staticmethod
     def create():
-        interval = core.CONFIG['Search']['Watchlists']['traktfrequency'] * 60
+        interval = core.CONFIG["Search"]["Watchlists"]["traktfrequency"] * 60
 
         now = datetime.datetime.today()
 
         hr = now.hour
-        min = now.minute + core.CONFIG['Search']['Watchlists']['traktfrequency']
+        min = now.minute + core.CONFIG["Search"]["Watchlists"]["traktfrequency"]
 
-        if core.CONFIG['Search']['Watchlists']['traktsync']:
-            if any(core.CONFIG['Search']['Watchlists']['Traktlists'].keys()):
+        if core.CONFIG["Search"]["Watchlists"]["traktsync"]:
+            if any(core.CONFIG["Search"]["Watchlists"]["Traktlists"].keys()):
                 auto_start = True
             else:
-                logging.warning('Trakt sync enabled but no lists are enabled.')
+                logging.warning("Trakt sync enabled but no lists are enabled.")
                 auto_start = False
         else:
             auto_start = False
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, trakt.sync, auto_start=auto_start, name='Trakt Sync')
+        SchedulerPlugin.ScheduledTask(
+            hr, min, interval, trakt.sync, auto_start=auto_start, name="Trakt Sync"
+        )
         return
 
 
 class FileScan(object):
-    ''' Scheduled task to automatically clear missing finished files '''
+    """ Scheduled task to automatically clear missing finished files """
 
     @staticmethod
     def create():
         interval = 24 * 3600
 
-        hr = core.CONFIG['System']['FileManagement']['scanmissinghour']
-        min = core.CONFIG['System']['FileManagement']['scanmissingmin']
+        hr = core.CONFIG["System"]["FileManagement"]["scanmissinghour"]
+        min = core.CONFIG["System"]["FileManagement"]["scanmissingmin"]
 
-        auto_start = core.CONFIG['System']['FileManagement']['scanmissingfiles']
+        auto_start = core.CONFIG["System"]["FileManagement"]["scanmissingfiles"]
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, Manage.scanmissingfiles, auto_start=auto_start, name='Missing Files Scan')
+        SchedulerPlugin.ScheduledTask(
+            hr,
+            min,
+            interval,
+            Manage.scanmissingfiles,
+            auto_start=auto_start,
+            name="Missing Files Scan",
+        )
         return
 
 
 class PostprocessedPathsScan(object):
-    ''' Scheduled task to automatically clear deleted postprocessed paths from database '''
+    """ Scheduled task to automatically clear deleted postprocessed paths from database """
 
     @staticmethod
     def create():
@@ -334,7 +412,14 @@ class PostprocessedPathsScan(object):
         hr = now.hour
         min = now.minute
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, PostprocessedPathsScan.scan_paths, auto_start=True, name='Postprocessed Paths Scan')
+        SchedulerPlugin.ScheduledTask(
+            hr,
+            min,
+            interval,
+            PostprocessedPathsScan.scan_paths,
+            auto_start=True,
+            name="Postprocessed Paths Scan",
+        )
         return
 
     @staticmethod
@@ -342,12 +427,13 @@ class PostprocessedPathsScan(object):
         postprocessed_paths = core.sql.get_postprocessed_paths()
         for path in postprocessed_paths:
             if not os.path.exists(path):
-                core.sql.delete('POSTPROCESSED_PATHS', 'path', path)
+                core.sql.delete("POSTPROCESSED_PATHS", "path", path)
 
         return
 
+
 class FinishedTorrentsCheck(object):
-    ''' Scheduled task to automatically delete finished torrents from downloader '''
+    """ Scheduled task to automatically delete finished torrents from downloader """
 
     @staticmethod
     def create():
@@ -359,58 +445,122 @@ class FinishedTorrentsCheck(object):
         min = now.minute
 
         auto_start = False
-        if core.CONFIG['Downloader']['Sources']['torrentenabled']:
-            for name, config in core.CONFIG['Downloader']['Torrent'].items():
-                ignore_remove_torrents = name == 'DelugeRPC' or name == 'DelugeWeb'
-                if config['enabled'] and (not ignore_remove_torrents and config.get('removetorrents') or config.get('removestalledfor')):
+        if core.CONFIG["Downloader"]["Sources"]["torrentenabled"]:
+            for name, config in core.CONFIG["Downloader"]["Torrent"].items():
+                ignore_remove_torrents = name == "DelugeRPC" or name == "DelugeWeb"
+                if config["enabled"] and (
+                    not ignore_remove_torrents
+                    and config.get("removetorrents")
+                    or config.get("removestalledfor")
+                ):
                     auto_start = True
                     break
 
-        SchedulerPlugin.ScheduledTask(hr, min, interval, FinishedTorrentsCheck.check_torrents, auto_start=auto_start, name='Torrents Status Check')
+        SchedulerPlugin.ScheduledTask(
+            hr,
+            min,
+            interval,
+            FinishedTorrentsCheck.check_torrents,
+            auto_start=auto_start,
+            name="Torrents Status Check",
+        )
         return
 
     @staticmethod
     def check_torrents():
-        for client, config in core.CONFIG['Downloader']['Torrent'].items():
-            if config['enabled']:
+        for client, config in core.CONFIG["Downloader"]["Torrent"].items():
+            if config["enabled"]:
                 progress = {}
                 now = int(datetime.datetime.timestamp(datetime.datetime.now()))
-                if config.get('removestalledfor'):
+                if config.get("removestalledfor"):
                     progress = core.sql.get_download_progress(client)
 
                 downloader = getattr(downloaders, client)
-                for torrent in downloader.get_torrents_status(stalled_for=config.get('removestalledfor'), progress=progress):
+                for torrent in downloader.get_torrents_status(
+                    stalled_for=config.get("removestalledfor"), progress=progress
+                ):
                     progress_update = None
 
-                    if torrent['status'] == 'finished' and config.get('removetorrents'):
-                        logging.info('Check if we know finished torrent {} and is postprocessed ({})'.format(torrent['hash'], torrent['name']))
-                        if core.sql.row_exists('MARKEDRESULTS', guid=str(torrent['hash']), status='Finished'):
-                            downloader.cancel_download(torrent['hash'])
+                    if torrent["status"] == "finished" and config.get("removetorrents"):
+                        logging.info(
+                            "Check if we know finished torrent {} and is postprocessed ({})".format(
+                                torrent["hash"], torrent["name"]
+                            )
+                        )
+                        if core.sql.row_exists(
+                            "MARKEDRESULTS",
+                            guid=str(torrent["hash"]),
+                            status="Finished",
+                        ):
+                            downloader.cancel_download(torrent["hash"])
 
-                    if torrent['status'] == 'stalled':
-                        logging.info('Check if we know torrent {} and is snatched ({})'.format(torrent['hash'], torrent['name']))
-                        if torrent['hash'] in progress:
-                            result = core.sql.get_single_search_result('downloadid', str(torrent['hash']))
-                            movie = core.sql.get_movie_details('imdbid', result['imdbid'])
-                            best_release = snatcher.get_best_release(movie, ignore_guid=result['guid'])
+                    if torrent["status"] == "stalled":
+                        logging.info(
+                            "Check if we know torrent {} and is snatched ({})".format(
+                                torrent["hash"], torrent["name"]
+                            )
+                        )
+                        if torrent["hash"] in progress:
+                            result = core.sql.get_single_search_result(
+                                "downloadid", str(torrent["hash"])
+                            )
+                            movie = core.sql.get_movie_details(
+                                "imdbid", result["imdbid"]
+                            )
+                            best_release = snatcher.get_best_release(
+                                movie, ignore_guid=result["guid"]
+                            )
                             # if top score is already downloading returns {}, stalled torrent will be deleted and nothing will be snatched
                             if best_release is not None:
-                                logging.info('Torrent {} is stalled, download will be cancelled and marked as Bad'.format(torrent['hash']))
-                                Manage.searchresults(result['guid'], 'Bad')
-                                Manage.markedresults(result['guid'], 'Bad', imdbid=result['imdbid'])
-                                downloader.cancel_download(torrent['hash'])
+                                logging.info(
+                                    "Torrent {} is stalled, download will be cancelled and marked as Bad".format(
+                                        torrent["hash"]
+                                    )
+                                )
+                                Manage.searchresults(result["guid"], "Bad")
+                                Manage.markedresults(
+                                    result["guid"], "Bad", imdbid=result["imdbid"]
+                                )
+                                downloader.cancel_download(torrent["hash"])
                                 if best_release:
-                                    logging.info("Snatch {} {}".format(best_release['guid'], best_release['title']))
+                                    logging.info(
+                                        "Snatch {} {}".format(
+                                            best_release["guid"], best_release["title"]
+                                        )
+                                    )
                                     snatcher.download(best_release)
 
-                    elif config.get('removestalledfor') and 'progress' in torrent and torrent['hash'] in progress:
-                        if torrent['status'] == 'downloading':
-                            if progress[torrent['hash']]['progress'] is None or torrent['progress'] != progress[torrent['hash']]['progress']:
-                                progress_update = {'download_progress': torrent['progress'], 'download_time': now}
-                        elif progress[torrent['hash']]['progress']:
-                            progress_update = {'download_progress': None, 'download_time': None}
+                    elif (
+                        config.get("removestalledfor")
+                        and "progress" in torrent
+                        and torrent["hash"] in progress
+                    ):
+                        if torrent["status"] == "downloading":
+                            if (
+                                progress[torrent["hash"]]["progress"] is None
+                                or torrent["progress"]
+                                != progress[torrent["hash"]]["progress"]
+                            ):
+                                progress_update = {
+                                    "download_progress": torrent["progress"],
+                                    "download_time": now,
+                                }
+                        elif progress[torrent["hash"]]["progress"]:
+                            progress_update = {
+                                "download_progress": None,
+                                "download_time": None,
+                            }
 
-                    if progress_update and core.sql.row_exists('SEARCHRESULTS', downloadid=str(torrent['hash']), status='Snatched'):
-                        core.sql.update_multiple_values('SEARCHRESULTS', progress_update, 'downloadid', torrent['hash'])
+                    if progress_update and core.sql.row_exists(
+                        "SEARCHRESULTS",
+                        downloadid=str(torrent["hash"]),
+                        status="Snatched",
+                    ):
+                        core.sql.update_multiple_values(
+                            "SEARCHRESULTS",
+                            progress_update,
+                            "downloadid",
+                            torrent["hash"],
+                        )
 
         return

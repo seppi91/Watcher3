@@ -7,10 +7,10 @@
 
 # Add api information to conf:
 
-watcherapi = 'APIKEY'
-watcheraddress = 'http://localhost:9090/'
-category = 'Watcher'
-verifyssl = True    # may need to change to False if using self-signed ssl cert
+watcherapi = "APIKEY"
+watcheraddress = "http://localhost:9090/"
+category = "Watcher"
+verifyssl = True  # may need to change to False if using self-signed ssl cert
 
 #  DO NOT TOUCH ANYTHING BELOW THIS LINE!  #
 # ======================================== #
@@ -18,9 +18,9 @@ verifyssl = True    # may need to change to False if using self-signed ssl cert
 import sys
 import os
 
-download_dir = sys.argv[2]          # %D
+download_dir = sys.argv[2]  # %D
 
-while download_dir[-1] in ('/', '\\'):
+while download_dir[-1] in ("/", "\\"):
     download_dir = download_dir[:-1]
 parent_folder = os.path.split(download_dir)[-1]
 if parent_folder.lower() != category.lower():
@@ -33,12 +33,14 @@ import ssl
 if sys.version_info.major < 3:
     import urllib
     import urllib2
+
     urlencode = urllib.urlencode
     request = urllib2.Request
     urlopen = urllib2.urlopen
 else:
     import urllib.parse
     import urllib.request
+
     request = urllib.request.Request
     urlencode = urllib.parse.urlencode
     urlopen = urllib.request.urlopen
@@ -51,24 +53,24 @@ if not verifyssl:
 # Gather info
 data = {}
 
-data['apikey'] = watcherapi
+data["apikey"] = watcherapi
 
-data['name'] = sys.argv[1]          # %N
-data['path'] = sys.argv[3]          # %R
-data['downloadid'] = sys.argv[4]    # %I
-data['guid'] = sys.argv[4]
-data['mode'] = 'complete'
+data["name"] = sys.argv[1]  # %N
+data["path"] = sys.argv[3]  # %R
+data["downloadid"] = sys.argv[4]  # %I
+data["guid"] = sys.argv[4]
+data["mode"] = "complete"
 
 # Send info
-url = u'{}/postprocessing/'.format(watcheraddress)
-post_data = urlencode(data).encode('ascii')
+url = u"{}/postprocessing/".format(watcheraddress)
+post_data = urlencode(data).encode("ascii")
 
-request = request(url, post_data, headers={'User-Agent': 'Mozilla/5.0'})
-response = json.loads(urlopen(request, timeout=600, context=ctx).read().decode('utf-8'))
+request = request(url, post_data, headers={"User-Agent": "Mozilla/5.0"})
+response = json.loads(urlopen(request, timeout=600, context=ctx).read().decode("utf-8"))
 
-if response['status'] == 'finished':
+if response["status"] == "finished":
     sys.exit(0)
-elif response['status'] == 'incomplete':
+elif response["status"] == "incomplete":
     sys.exit(1)
 else:
     sys.exit(1)

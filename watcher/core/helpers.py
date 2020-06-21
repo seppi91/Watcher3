@@ -12,30 +12,31 @@ import logging
 import re
 
 
-logging.getLogger('requests').setLevel(logging.CRITICAL)
+logging.getLogger("requests").setLevel(logging.CRITICAL)
 
 
 class Url(object):
-    ''' Creates url requests and sanitizes urls '''
+    """ Creates url requests and sanitizes urls """
 
     proxies = None
 
-    user_agents = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-                   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-                   'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-                   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-                   'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-                   'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-                   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36',
-                   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/602.4.8 (KHTML, like Gecko) Version/10.0.3 Safari/602.4.8',
-                   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
-                   )
+    user_agents = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/602.4.8 (KHTML, like Gecko) Version/10.0.3 Safari/602.4.8",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+    )
 
-    trans = {i: ' ' for i in map(ord, '+.-_')}
+    trans = {i: " " for i in map(ord, "+.-_")}
 
     @staticmethod
     def normalize(s, ascii_only=False):
-        ''' "normalizes" strings for url params
+        """ "normalizes" strings for url params
         s (str): text to format
         ascii_only (bool): reduce to ascii-only characters   <default False>
 
@@ -44,23 +45,32 @@ class Url(object):
         Do not use with full url, only passed params
 
         Returns str
-        '''
+        """
         s = s.translate(Url.trans)
         for i in punctuation:
-            s = s.replace(i, ' ')
-        while '  ' in s:
-            s = s.replace('  ', ' ')
+            s = s.replace(i, " ")
+        while "  " in s:
+            s = s.replace("  ", " ")
 
-        s = unicodedata.normalize('NFKD', s)
+        s = unicodedata.normalize("NFKD", s)
 
         if ascii_only:
-            s = s.encode('ascii', 'ignore').decode('ascii')
+            s = s.encode("ascii", "ignore").decode("ascii")
 
         return s.lower().strip()
 
     @staticmethod
-    def open(url, post_data=None, timeout=30, headers={}, stream=False, proxy_bypass=False, expose_user_agent=False, allow_redirects=True):
-        ''' Assemles and executes requests call
+    def open(
+        url,
+        post_data=None,
+        timeout=30,
+        headers={},
+        stream=False,
+        proxy_bypass=False,
+        expose_user_agent=False,
+        allow_redirects=True,
+    ):
+        """ Assemles and executes requests call
         url (str): url to request
         post-data (dict): data to send via post                     <optional - default None>
         timeout (int): seconds to wait for timeout                  <optional - default 30>
@@ -71,37 +81,47 @@ class Url(object):
         Adds user-agent to headers.
 
         Returns object requests response
-        '''
+        """
         if expose_user_agent:
-            headers['User-Agent'] = 'Watcher3'
+            headers["User-Agent"] = "Watcher3"
         else:
-            headers['User-Agent'] = random.choice(Url.user_agents)
+            headers["User-Agent"] = random.choice(Url.user_agents)
 
-        verifySSL = core.CONFIG.get('Server', {}).get('verifyssl', False)
+        verifySSL = core.CONFIG.get("Server", {}).get("verifyssl", False)
 
-        kwargs = {'timeout': timeout, 'verify': verifySSL, 'stream': stream, 'headers': headers, 'allow_redirects': allow_redirects}
+        kwargs = {
+            "timeout": timeout,
+            "verify": verifySSL,
+            "stream": stream,
+            "headers": headers,
+            "allow_redirects": allow_redirects,
+        }
 
         if not proxy_bypass:
-            kwargs['proxies'] = Url.proxies
+            kwargs["proxies"] = Url.proxies
 
         if post_data:
-            kwargs['data'] = post_data
+            kwargs["data"] = post_data
             r = requests.post(url, **kwargs)
         else:
             r = requests.get(url, **kwargs)
 
         if r.status_code != 200:
-            logging.warning('Error code {} in response from {}'.format(r.status_code, r.request.url.split('?')[0]))
+            logging.warning(
+                "Error code {} in response from {}".format(
+                    r.status_code, r.request.url.split("?")[0]
+                )
+            )
 
         return r
 
 
 class Conversions(object):
-    ''' Coverts data formats. '''
+    """ Coverts data formats. """
 
     @staticmethod
     def human_file_size(value):
-        ''' Converts bytes to human readable size.
+        """ Converts bytes to human readable size.
         value (int): file size in bytes
 
         Creates string of file size in  highest appropriate suffix
@@ -109,85 +129,84 @@ class Conversions(object):
         Rounds to one decimal
 
         Returns str
-        '''
+        """
 
-        suffix = ('kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB')
+        suffix = ("kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
 
         base = 1024
         bytes = float(value)
 
         if bytes == 1:
-            return '1 Byte'
+            return "1 Byte"
         elif bytes < base:
-            return '{} Bytes'.format(bytes)
+            return "{} Bytes".format(bytes)
 
         for i, s in enumerate(suffix):
             unit = base ** (i + 2)
             if bytes < unit:
-                return '{} {}'.format(round(base * bytes / unit, 1), s)
+                return "{} {}".format(round(base * bytes / unit, 1), s)
 
     @staticmethod
     def human_datetime(dt):
-        ''' Converts datetime object into human-readable format.
+        """ Converts datetime object into human-readable format.
         dt (object): datetime object
 
         Formats date as 'Monday, Jan 1st, at 12:00' (24hr time)
 
         Returns str
-        '''
+        """
 
-        return dt.strftime('%A, %b %d, at %H:%M')
+        return dt.strftime("%A, %b %d, at %H:%M")
 
 
 class Torrent(object):
-
     @staticmethod
     def get_hash(torrent, file_bytes=False):
-        ''' Gets hash from torrent or magnet
+        """ Gets hash from torrent or magnet
         torrent (str): torrent/magnet url or bytestring of torrent file contents
         file_bytes (bool): if url is bytes of torrent file
 
         If file_bytes == True, torrent should be a bytestring of the contents of the torrent file
 
         Returns str of lower-case torrent hash or '' if exception
-        '''
+        """
 
-        logging.debug('Finding hash for torrent {}'.format(torrent))
-        if not file_bytes and torrent.startswith('magnet'):
-            return torrent.split('&')[0].split(':')[-1].upper()
+        logging.debug("Finding hash for torrent {}".format(torrent))
+        if not file_bytes and torrent.startswith("magnet"):
+            return torrent.split("&")[0].split(":")[-1].upper()
         else:
             try:
                 raw = torrent if file_bytes else Url.open(torrent, stream=True).content
                 metadata = bencodepy.decode(raw)
-                hashcontents = bencodepy.encode(metadata[b'info'])
+                hashcontents = bencodepy.encode(metadata[b"info"])
                 return hashlib.sha1(hashcontents).hexdigest().upper()
             except Exception as e:
-                logging.error('Unable to get torrent hash', exc_info=True)
-                return ''
+                logging.error("Unable to get torrent hash", exc_info=True)
+                return ""
 
     @staticmethod
     def get_hash_and_magnet(torrent):
-        ''' Gets hash from torrent or magnet
+        """ Gets hash from torrent or magnet
         torrent (str): torrent/magnet url
 
         Returns tuple with str of lower-case torrent hash or '', and magnet uri
         if torrent url redirects to magnet uri
-        '''
+        """
 
-        logging.debug('Finding hash for torrent {}'.format(torrent))
+        logging.debug("Finding hash for torrent {}".format(torrent))
         response = Url.open(torrent, stream=True, allow_redirects=False)
-        url = response.headers.get('Location', '')
+        url = response.headers.get("Location", "")
         match = re.search(r"[?&]xt=urn:btih:([A-Z0-9]*)", url, re.I)
         if match and match.group(1):
             return match.group(1), url
         else:
-            return ''
+            return ""
+
 
 class Comparisons(object):
-
     @staticmethod
-    def compare_dict(new, existing, parent=''):
-        ''' Recursively finds differences in dicts
+    def compare_dict(new, existing, parent=""):
+        """ Recursively finds differences in dicts
         new (dict): newest dictionary
         existing (dict): oldest dictionary
         parent (str): key of parent dict when recursive. DO NOT PASS.
@@ -200,7 +219,7 @@ class Comparisons(object):
             value as parent. The universe might implode.
 
         Returns dict
-        '''
+        """
 
         diff = {}
         for k in new.keys():
@@ -221,10 +240,17 @@ class Comparisons(object):
     def _k(a):
         k = be(a)
 
-        d = {b'746D6462': ('GE4DIMLFMVRGCOLCMEZDMMZTG5TGEZBUGJSDANRQME3DONBRMZRQ====',
-                           'MY3GEZBWHA3WMZTBGYZWGZBSHAZGENTGMYZGGNRYG43WMMRWGY4Q===='),
-             b'796F7574756265': ('IFEXUYKTPFBU65JVJNUGCUZZK5RVIZSOOZXFES32PJFE2ZRWPIWTMTSHMIZDQTI=',),
-             b'7472616B74': ('GZQWMNZQGU3WMYLBMNSTANRQGJQWENDEMI4TKZDGHBSDINDDMVSTIMBVMZSWCM3GGE4GCZRWMU3DQOJWGAYDGYRVME4DGOBTMQZDQYQ=',)
-             }
+        d = {
+            b"746D6462": (
+                "GE4DIMLFMVRGCOLCMEZDMMZTG5TGEZBUGJSDANRQME3DONBRMZRQ====",
+                "MY3GEZBWHA3WMZTBGYZWGZBSHAZGENTGMYZGGNRYG43WMMRWGY4Q====",
+            ),
+            b"796F7574756265": (
+                "IFEXUYKTPFBU65JVJNUGCUZZK5RVIZSOOZXFES32PJFE2ZRWPIWTMTSHMIZDQTI=",
+            ),
+            b"7472616B74": (
+                "GZQWMNZQGU3WMYLBMNSTANRQGJQWENDEMI4TKZDGHBSDINDDMVSTIMBVMZSWCM3GGE4GCZRWMU3DQOJWGAYDGYRVME4DGOBTMQZDQYQ=",
+            ),
+        }
 
-        return bd(rc(d[k])).decode('ascii')  # looooooooooooooooool
+        return bd(rc(d[k])).decode("ascii")  # looooooooooooooooool

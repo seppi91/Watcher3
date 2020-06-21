@@ -6,7 +6,7 @@ from infi.systray import SysTrayIcon
 
 
 class SysTrayPlugin(plugins.SimplePlugin):
-    '''
+    """
     CherryPy plugin that creates a system tray icon for Windows.
 
     Because SysTrayIcon always fires off on_quit, we can't have on_quit
@@ -42,11 +42,11 @@ class SysTrayPlugin(plugins.SimplePlugin):
     cherrypy.engine.exit() >
     sys.exit()
 
-    '''
+    """
 
     def __init__(self, bus, icon, name, menu_options, on_quit=lambda: None):
         if not callable(on_quit):
-            raise TypeError('on_quit not a callable object.')
+            raise TypeError("on_quit not a callable object.")
         self.on_quit = on_quit
 
         plugins.SimplePlugin.__init__(self, bus)
@@ -59,7 +59,7 @@ class SysTrayPlugin(plugins.SimplePlugin):
         return
 
     def stop(self):
-        if self.quit_method == 'men':
+        if self.quit_method == "men":
             return
         else:
             self.systray._on_quit = None
@@ -68,6 +68,6 @@ class SysTrayPlugin(plugins.SimplePlugin):
 
     def _on_quit(self, systray):
         self.on_quit()
-        self.quit_method = 'men'
+        self.quit_method = "men"
         cherrypy.engine.exit()
         sys.exit(0)
