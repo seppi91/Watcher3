@@ -10,7 +10,6 @@ import cherrypy  # noqa
 
 from cherrypy.process.plugins import Daemonizer  # noqa
 from cherrypy.process.plugins import PIDFile
-
 from watcher import core  # noqa
 
 
@@ -28,8 +27,6 @@ if os.name == "nt":
     core.PLATFORM = "windows"
 else:
     core.PLATFORM = "*nix"
-
-
 
 
 def run():

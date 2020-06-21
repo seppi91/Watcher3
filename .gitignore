@@ -29,3 +29,4 @@ TODO
 .*
 !.github
 !.pre-commit-config.yaml
+!.flake8

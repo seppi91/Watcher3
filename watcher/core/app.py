@@ -7,7 +7,6 @@ import time
 import cherrypy
 
 from mako.template import Template
-
 from watcher import core
 
 from . import ajax

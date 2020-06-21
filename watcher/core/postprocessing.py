@@ -651,7 +651,7 @@ class Postprocessing(object):
             logging.info("Renamer disabled.")
             result["tasks"]["renamer"] = {"enabled": False}
 
-        if data.get("imdbid") and data["imdbid"] is not "N/A":
+        if data.get("imdbid") and data["imdbid"] != "N/A":
             core.sql.update(
                 "MOVIES",
                 "finished_file",

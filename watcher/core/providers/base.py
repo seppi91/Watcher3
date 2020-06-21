@@ -5,11 +5,10 @@ import urllib.parse
 from gettext import gettext as _
 from xml.etree.cElementTree import fromstring
 
-from xmljson import yahoo
-
 from watcher import core
 from watcher.core import proxy
 from watcher.core.helpers import Url
+from xmljson import yahoo
 
 
 class NewzNabProvider(object):

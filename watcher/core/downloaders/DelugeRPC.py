@@ -4,7 +4,6 @@ import re
 from datetime import datetime
 
 from deluge_client import DelugeRPCClient
-
 from watcher import core
 
 

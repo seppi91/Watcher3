@@ -31,7 +31,6 @@ if parent_folder.lower() != category.lower():
     sys.exit(0)
 
 
-
 if sys.version_info.major < 3:
     import urllib
     import urllib2

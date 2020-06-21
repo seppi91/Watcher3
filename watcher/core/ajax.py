@@ -7,9 +7,8 @@ import time
 
 from gettext import gettext as _
 
-import cherrypy
-
 import backup
+import cherrypy
 
 from watcher import core
 

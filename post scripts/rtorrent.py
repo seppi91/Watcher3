@@ -14,9 +14,11 @@ verifyssl = True  # may need to change to False if using self-signed ssl cert
 
 import json
 import ssl
+import sys
+
+
 #  DO NOT TOUCH ANYTHING BELOW THIS LINE!  #
 # ======================================== #
-import sys
 
 
 script, rtor_label, name, downloadid, path = sys.argv

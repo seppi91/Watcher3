@@ -5,7 +5,6 @@ import re
 import PTN
 
 from stringscore import liquidmetal as lm
-
 from watcher import core
 
 from . import proxy
@@ -88,7 +87,7 @@ def search_all():
         i
         for i in movies
         if i["backlog"] != 1
-        and i["status"] is not "Disabled"
+        and i["status"] != "Disabled"
         and Manage.verify(i, today=today)
     ]
     if backlog_movies:
@@ -376,7 +375,7 @@ def get_source(ptn_data):
 
     logging.info("Determining source media for {}".format(ptn_data))
 
-    if not "resolution" in ptn_data:
+    if "resolution" not in ptn_data:
         resolution = "SD"
     elif any(i in ptn_data["resolution"] for i in ("4k", "uhd", "2160p")):
         resolution = "4K"

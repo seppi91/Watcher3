@@ -3,10 +3,9 @@ import re
 
 from xml.etree.cElementTree import fromstring
 
-from xmljson import yahoo
-
 from watcher import core
 from watcher.core.helpers import Url
+from xmljson import yahoo
 
 
 logging = logging.getLogger(__name__)

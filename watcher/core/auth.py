@@ -3,7 +3,6 @@ import logging
 import cherrypy
 
 from mako.template import Template
-
 from watcher import core
 
 
